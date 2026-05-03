@@ -89,13 +89,15 @@ Kotlin 版直接把接口声明成 `suspend fun`。
 Java 版的核心代码是这样：
 
 ```java
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    Callable<ApiResult> bannerTask = () -> execute("banner", api.banner());
-    Callable<ApiResult> articlesTask = () -> execute("homeArticles", api.homeArticles());
+private static void runConcurrent(WanAndroidJavaApi api) throws InterruptedException {
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        Callable<ApiResult> bannerTask = () -> execute("banner", api.banner());
+        Callable<ApiResult> articlesTask = () -> execute("homeArticles", api.homeArticles());
 
-    List<Future<ApiResult>> futures = executor.invokeAll(List.of(bannerTask, articlesTask));
-    for (Future<ApiResult> future : futures) {
-        printResult(future);
+        List<Future<ApiResult>> futures = executor.invokeAll(List.of(bannerTask, articlesTask));
+        for (Future<ApiResult> future : futures) {
+            printResult(future);
+        }
     }
 }
 ```
@@ -285,8 +287,10 @@ Java 虚拟线程本身不等于结构化并发。
 在 Java 里你可以用：
 
 ```java
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    ...
+private static void runWithLifecycle(WanAndroidJavaApi api) throws InterruptedException {
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        // submit tasks
+    }
 }
 ```
 
@@ -382,8 +386,10 @@ Android 里优先使用：
 示例里使用：
 
 ```java
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    ...
+private static void runAndCloseExecutor(WanAndroidJavaApi api) throws InterruptedException {
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        // submit tasks
+    }
 }
 ```
 
