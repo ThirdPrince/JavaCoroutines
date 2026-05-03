@@ -16,13 +16,28 @@ public class WanAndroidJavaDemo {
     private static final String BASE_URL = "https://www.wanandroid.com/";
 
     public static void main(String[] args) throws Exception {
+
+
+        // 主线程循环打印日志，观察它和虚拟线程是并行发生的
+        Thread monitor = Thread.ofPlatform().name("main-monitor").start(() -> {
+            for (int i = 1; i <= 200; i++) {
+                System.out.println("[monitor] i=" + i
+                        + ", thread=" + Thread.currentThread().getName()
+                        + ", isVirtual=" + Thread.currentThread().isVirtual());
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ignored) {
+                    return;
+                }
+            }
+        });
         WanAndroidJavaApi api = createApi();
         long start = System.currentTimeMillis();
 
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             Callable<ApiResult> bannerTask = () -> execute("banner", api.banner());
             Callable<ApiResult> articlesTask = () -> execute("homeArticles", api.homeArticles());
-
+            Thread.sleep(3000);
             List<Future<ApiResult>> futures = executor.invokeAll(List.of(bannerTask, articlesTask));
             for (Future<ApiResult> future : futures) {
                 System.out.println("future ="+Thread.currentThread().getName());
@@ -32,6 +47,7 @@ public class WanAndroidJavaDemo {
         System.out.println("result ="+Thread.currentThread().getName());
         System.out.println("Java Retrofit + virtual threads total cost: "
                 + (System.currentTimeMillis() - start) + " ms");
+        monitor.join();
     }
 
     private static WanAndroidJavaApi createApi() {
