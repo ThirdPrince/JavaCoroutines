@@ -1,21 +1,28 @@
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 private const val BASE_URL = "https://www.wanandroid.com/"
+
+val vThreadExecutor = Executors.newVirtualThreadPerTaskExecutor()
+
+// 2. 将其转换为 Kotlin 协程的 Dispatcher
+val vThreadDispatcher = vThreadExecutor.asCoroutineDispatcher()
 
 suspend fun main() = coroutineScope {
     val api = createApi()
     val start = System.currentTimeMillis()
 
-    val banner = async {
+    val banner = async(vThreadDispatcher) {
         execute("banner") { api.banner() }
     }
-    val articles = async {
+    val articles = async(vThreadDispatcher) {
         execute("homeArticles") { api.homeArticles() }
     }
 

@@ -35,3 +35,10 @@ tasks.register<JavaExec>("runKotlinDemo") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("WanAndroidKotlinDemoKt")
 }
+
+tasks.register<JavaExec>("runLoomBlockingQueueDemo") {
+    group = "application"
+    description = "Runs the Dispatchers.LOOM + BlockingQueue demo."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("LoomBlockingQueueDemoKt")
+}
