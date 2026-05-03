@@ -287,9 +287,11 @@ Java 虚拟线程本身不等于结构化并发。
 在 Java 里你可以用：
 
 ```java
-private static void runWithLifecycle(WanAndroidJavaApi api) throws InterruptedException {
+private static void runWithLifecycle(WanAndroidJavaApi api) {
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-        // submit tasks
+        executor.submit(() -> {
+            // run task
+        });
     }
 }
 ```
@@ -386,9 +388,11 @@ Android 里优先使用：
 示例里使用：
 
 ```java
-private static void runAndCloseExecutor(WanAndroidJavaApi api) throws InterruptedException {
+private static void runAndCloseExecutor(WanAndroidJavaApi api) {
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-        // submit tasks
+        executor.submit(() -> {
+            // run task
+        });
     }
 }
 ```
