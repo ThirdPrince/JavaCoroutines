@@ -37,7 +37,6 @@ public class WanAndroidJavaDemo {
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             Callable<ApiResult> bannerTask = () -> execute("banner", api.banner());
             Callable<ApiResult> articlesTask = () -> execute("homeArticles", api.homeArticles());
-            Thread.sleep(3000);
             List<Future<ApiResult>> futures = executor.invokeAll(List.of(bannerTask, articlesTask));
             for (Future<ApiResult> future : futures) {
                 System.out.println("future ="+Thread.currentThread().getName());
